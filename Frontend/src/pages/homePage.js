@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, useAnimation, } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { FaUserPlus, FaInfoCircle, FaUserFriends, FaHandshake, } from 'react-icons/fa';
@@ -14,15 +14,13 @@ import axios from "axios";
 const scrollToSection = (sectionId) => {
   const section = document.getElementById(sectionId);
   if (section) {
-    section.scrollIntoView({ behavior: 'smooth' });
+    section.scrollIntoView({ behavior: "smooth" });
   }
 };
-
 
 const HorizontalLine = () => (
   <div className="border-t border-maroon-600 my-8 h-1" />
 );
-
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,29 +28,41 @@ const Navbar = () => {
   const [user, setUser] = useState({ name: "", profilePic: "" });
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetch user details on mount
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
-      if (token) {
-        try {
-          const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          setUser({
-            name: response.data.first_name || response.data.username,
-            profilePic: response.data.profile_picture, // Adjust based on API response
-          });
-          setIsLoggedIn(true);
-        } catch (error) {
-          console.error("Error fetching user:", error);
+
+      if (!token) {
+        setIsLoggedIn(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUser({
+          name: response.data.first_name || response.data.username,
+          profilePic: response.data.profile_picture, // Adjust based on API response
+        });
+
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Error fetching user:", error.response?.data || error.message);
+        if (error.response?.status === 401) {
+          localStorage.removeItem("accessToken");
           setIsLoggedIn(false);
+          navigate("/login");
         }
       }
     };
+
     fetchUser();
-  }, []);
+  }, [navigate]);
 
   const handleLogin = () => navigate("/login");
   const handleLogout = () => {
@@ -60,6 +70,17 @@ const Navbar = () => {
     setIsLoggedIn(false);
     setShowProfileMenu(false);
     navigate("/login");
+  };
+
+  const handleNavClick = (sectionId) => {
+    if (location.pathname === "/") {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        scrollToSection(sectionId);
+        return;
+      }
+    }
+    navigate(`/${sectionId}`);
   };
 
   return (
@@ -71,7 +92,11 @@ const Navbar = () => {
 
         <div className="hidden md:flex space-x-6">
           {["home", "about-us", "Guide", "partners", "contact-us"].map((label) => (
-            <button key={label} onClick={() => navigate(`/${label}`)} className="text-white hover:text-pink-400">
+            <button
+              key={label}
+              onClick={() => handleNavClick(label)}
+              className="text-white hover:text-pink-400"
+            >
               {label.replace("-", " ").toUpperCase()}
             </button>
           ))}
@@ -121,7 +146,6 @@ const Navbar = () => {
     </nav>
   );
 };
-
 
 
 const Hero = () => {

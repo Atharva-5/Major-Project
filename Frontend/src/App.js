@@ -456,7 +456,7 @@ const Partners = () => {
         </motion.p>
 
         {/* Call-to-Action Button */}
-          <motion.div
+        <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={textInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -464,11 +464,11 @@ const Partners = () => {
         >
           <button
             className="bg-maroon-600 text-white px-6 py-3 rounded-lg shadow hover:bg-maroon-700 transition duration-200"
-            onClick={() => window.open("https://forms.gle/e5NMp5R4x8rgV41ZA", "_blank")}
+            onClick={() => window.open("https://forms.gle/fyaYY23Sg5N4yWR38", "_blank")}
           >
             Join Now
           </button>
-          
+
           <button
             className="bg-maroon-600 text-white px-6 py-3 rounded-lg shadow hover:bg-maroon-700 transition duration-200"
             onClick={() => window.open("https://forms.gle/k93HJE52zeqt5Nkz9", "_blank")} // Replace with the actual URL for "Get Masik"
@@ -750,7 +750,7 @@ const Footer = () => (
         <ul className="text-sm space-y-2">
           <li><i className="fas fa-map-marker-alt mr-2"></i> Solapur, Maharashtra</li>
           <li><i className="fas fa-envelope mr-2"></i> vivahbandh0@gmail.com</li>
-          <li><i className="fas fa-phone-alt mr-2"></i>+918080441475</li>
+          <li><i className="fas fa-phone-alt mr-2"></i>+910000000000</li>
         </ul>
       </div>
 

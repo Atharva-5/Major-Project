@@ -1,9 +1,12 @@
 from django.urls import path
-from .views import RegisterView, LoginView
+from django.conf.urls.static import static
+from django.conf import settings
+from .views import get_user_details,RegisterView, LoginView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-]
+    path("user/", get_user_details, name="user-details"),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

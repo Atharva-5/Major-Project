@@ -15,13 +15,17 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/login/', formData);
+      const response = await axios.post('http://127.0.0.1:8000/auth/login/', formData);
       localStorage.setItem('accessToken', response.data.access);
-      navigate('/'); // Redirect to homepage after login
+      navigate('/home'); // Redirect to homepage after login
     } catch (err) {
       setError('Login failed. Please check your credentials.');
     }
   };
+  const handleRegister = () => {
+    navigate('/signup'); // Redirects to Register Page
+  };
+
 
   return (
     <div className="login-container">
@@ -41,8 +45,12 @@ const Login = () => {
             />
           </div>
         ))}
-        <button type="submit" className="login-button">Login</button>
-        <button type="button" className="signin-button">Sign In</button>
+        <div class="button-container">
+          <button type="submit" className="login-button">Login</button>
+          <button type="button" onClick={handleRegister} className="signin-button">
+            Sign Up
+          </button>
+        </div>
       </form>
     </div>
   );

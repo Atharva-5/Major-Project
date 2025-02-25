@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { motion, useAnimation, } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { FaUserPlus, FaInfoCircle, FaUserFriends, FaHandshake, } from 'react-icons/fa';
 import image3 from '../images/image3-transformed.jpeg';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './homePage.css';
-
+import { FaUserCircle } from "react-icons/fa";
+import axios from "axios";
 
 
 // Scroll function for smooth scrolling
@@ -21,113 +23,105 @@ const HorizontalLine = () => (
   <div className="border-t border-maroon-600 my-8 h-1" />
 );
 
+
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [user, setUser] = useState({ name: "", profilePic: "" });
+
+  const navigate = useNavigate();
+
+  // Fetch user details on mount
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        try {
+          const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setUser({
+            name: response.data.first_name || response.data.username,
+            profilePic: response.data.profile_picture, // Adjust based on API response
+          });
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error("Error fetching user:", error);
+          setIsLoggedIn(false);
+        }
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogin = () => navigate("/login");
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    setIsLoggedIn(false);
+    setShowProfileMenu(false);
+    navigate("/login");
+  };
 
   return (
     <nav className="bg-gradient-to-r from-maroon-600 to-gray-800 shadow-md fixed mx-auto w-full z-30">
-      <div className="container mx-auto px-10 py-4">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
-          <div className="text-2xl text-white font-bold">
-            <a href="/" className="hover:underline">VivahBandh</a>
-          </div>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6">
-            {["home", "about-us", "Guide", "partners", "contact-us"].map((label) => (
-              <button
-                key={label}
-                onClick={() => scrollToSection(label)}
-                className="text-white hover:text-pink-400 transition duration-300"
-              >
-                {label.replace("-", " ").toUpperCase()}
-              </button>
-            ))}
-          </div>
-
-          {/* Register and Get Masika Buttons for Desktop */}
-          <div className="hidden md:flex space-x-4">
-            <a
-              href="https://forms.gle/fyaYY23Sg5N4yWR38"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500 transition duration-300"
-            >
-              Register
-            </a>
-            <a
-              href="https://forms.gle/k93HJE52zeqt5Nkz9"
-              className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500 transition duration-300"
-            >
-              Get Masika
-            </a>
-          </div>
-
-          {/* Hamburger Menu Icon for Mobile */}
-          <div className="md:hidden flex items-center justify-end pr-4">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-white focus:outline-none -mr-7"
-            >
-              <svg
-                className="h-7 w-7 fill-current"
-                viewBox="0 0 24 24"
-              >
-                {isOpen ? (
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z"
-                  />
-                ) : (
-                  <path
-                    fillRule="evenodd"
-                    d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2z"
-                  />
-                )}
-              </svg>
-            </button>
-          </div>
+      <div className="container mx-auto px-10 py-4 flex justify-between items-center">
+        <div className="text-2xl text-white font-bold">
+          <a href="/" className="hover:underline">VivahBandh</a>
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden bg-gradient-to-r from-maroon-600 to-gray-800 shadow-md bg-opacity-100 p-4 absolute top-full left-0 right-0 z-30 overflow-auto max-h-[calc(100vh-4rem)]">
-            {["home", "about-us", "Guide", "partners", "contact-us"].map((label) => (
-              <button
-                key={label}
-                onClick={() => {
-                  scrollToSection(label);
-                  setIsOpen(false);
-                }}
-                className="block text-white hover:text-pink-400 transition duration-300 py-2 text-left w-full"
-              >
-                {label.replace("-", " ").toUpperCase()}
-              </button>
-            ))}
+        <div className="hidden md:flex space-x-6">
+          {["home", "about-us", "Guide", "partners", "contact-us"].map((label) => (
+            <button key={label} onClick={() => navigate(`/${label}`)} className="text-white hover:text-pink-400">
+              {label.replace("-", " ").toUpperCase()}
+            </button>
+          ))}
+        </div>
 
-            {/* Register and Get Masika Buttons for Mobile */}
-            <a
-              href="https://forms.gle/fyaYY23Sg5N4yWR38"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500 transition duration-300 text-center w-full mt-2"
-            >
-              Register
-            </a>
-            <a
-              href="https://forms.gle/k93HJE52zeqt5Nkz9"
-              className="block bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500 transition duration-300 text-center w-full mt-2"
-            >
-              Get Masika
-            </a>
-          </div>
-        )}
+        <div className="hidden md:flex space-x-4">
+          <a href="https://forms.gle/fyaYY23Sg5N4yWR38" className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500">
+            Register
+          </a>
+          <a href="https://forms.gle/k93HJE52zeqt5Nkz9" className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500">
+            Get Masika
+          </a>
+
+          {isLoggedIn ? (
+            <div className="relative">
+              <button onClick={() => setShowProfileMenu(!showProfileMenu)} className="text-white text-3xl pt-1">
+                {user.profilePic ? (
+                  <img
+                    src={`http://127.0.0.1:8000${user.profilePic}`}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full border-2 border-white"
+                  />
+                ) : (
+                  <FaUserCircle />
+                )}
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg p-4 text-gray-800">
+                  <p className="font-semibold">{user.name}</p>
+                  <button
+                    onClick={handleLogout}
+                    className="mt-2 w-full text-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button onClick={handleLogin} className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-500">
+              Login
+            </button>
+          )}
+        </div>
       </div>
     </nav>
   );
 };
+
 
 
 const Hero = () => {
@@ -197,16 +191,6 @@ const Hero = () => {
         >
           At VivahBandh, we believe that every individual deserves to find a companion who complements their life.
         </motion.p>
-
-        {/* <motion.a
-          href="/register"
-          initial={{ opacity: 0, x: -100 }}
-          animate={textInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
-          transition={{ duration: 0.9, delay: 0.8 }}
-          className="bg-maroon-600 font-bold text-white px-6 py-3 rounded-full hover:bg-pink-500 transition duration-300"
-        >
-          Get Started
-        </motion.a> */}
       </div>
     </div>
   );

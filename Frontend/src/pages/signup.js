@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './signup.css'; // Import the CSS file
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const Signup = () => {
     phone: '',
     caste: '',
     gender: '',
+    photo: '',
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -29,28 +31,26 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-gray-800 to-black text-white">
-      <form onSubmit={handleSubmit} className="bg-gray-900 p-8 rounded-2xl shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-        {['username', 'email', 'password', 'phone', 'caste', 'gender'].map((field) => (
-          <div className="mb-4" key={field}>
-            <label className="block mb-2 capitalize">{field}</label>
+    <div className="signup-container">
+      <form onSubmit={handleSubmit} className="signup-form">
+        <h2 className="signup-title">Sign Up</h2>
+        {error && <p className="signup-error">{error}</p>}
+        {['username', 'email', 'password', 'phone', 'caste', 'gender', 'photo'].map((field) => (
+          <div className="input-group" key={field}>
+            <label className="input-label">{field}</label>
             <input
               type={field === 'password' ? 'password' : 'text'}
               name={field}
               value={formData[field]}
               onChange={handleChange}
-              className="w-full p-2 rounded bg-gray-700 focus:outline-none"
+              className="input-field"
               required
             />
           </div>
         ))}
-        <button
-          type="submit"
-          className="w-full py-2 rounded bg-green-600 hover:bg-green-700 font-semibold"
-        >
-          Sign Up
+        <button type="submit" className="signup-button">Sign Up</button>
+        <button type="button" className="login-button" onClick={() => navigate('/login')}>
+          Login
         </button>
       </form>
     </div>

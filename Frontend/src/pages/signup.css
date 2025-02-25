@@ -1,0 +1,83 @@
+/* Background and Container */
+.signup-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #1f2937, #000);
+    color: white;
+  }
+  
+  /* Form Styling */
+  .signup-form {
+    background: #111827;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 24rem;
+    text-align: center;
+  }
+  
+  /* Title */
+  .signup-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Error Message */
+  .signup-error {
+    color: red;
+    margin-bottom: 1rem;
+  }
+  
+  /* Input Fields */
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  .input-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: #374151;
+    color: white;
+    border: none;
+    outline: none;
+  }
+  
+  /* Buttons */
+  .signup-button, .login-button {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+  
+  .signup-button {
+    background-color: #10b981;
+    color: white;
+  }
+  
+  .signup-button:hover {
+    background-color: #059669;
+  }
+  
+  .login-button {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  .login-button:hover {
+    background-color: #1d4ed8;
+  }
+  

@@ -1,0 +1,87 @@
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in-top {
+    animation: slideInTop 1s ease-out forwards;
+}
+
+.slide-in-bottom {
+    animation: slideInBottom 1s ease-out forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 1s ease-out;
+}
+
+.slide-in-right {
+    animation: slideInRight 1s ease-out;
+}
+
+.parent-container {
+    margin-right: 0;
+    /* Check and reset margin */
+    padding-right: 0;
+    /* Reset any padding if necessary */
+}
+
+.positioned-absolute {
+    position: absolute;
+    left: 0;
+    /* or right: 0 */
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    /* Start as hidden */
+    transition: opacity 0.3s ease-in-out;
+}
+
+.animated-section {
+    min-height: 400px;
+    /* Adjust based on your design */
+}

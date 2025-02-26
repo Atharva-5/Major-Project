@@ -7,17 +7,20 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, LoginSerializer
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 User = get_user_model()
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_details(request):
     user = request.user
     serializer = UserSerializer(user)
-    return Response(serializer.data)
-    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -38,5 +41,3 @@ class LoginView(generics.GenericAPIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-

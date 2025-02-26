@@ -31,64 +31,88 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch user details when component mounts
+  // ✅ Helper function to check if token exists
+  const checkAuthToken = () => {
+    const token = localStorage.getItem("accessToken");
+    return token !== null && token !== "";
+  };
+
+  // ✅ Fetch user details if authenticated
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
 
-      if (token) {
-        try {
-          const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+      if (!token) {
+        console.warn("No token found. User is not logged in.");
+        setIsLoggedIn(false);
+        return;
+      }
 
-          console.log("User Response:", response.data); // Debug: check API response
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-          setUser({
-            name: response.data.first_name || response.data.username,
-            profilePic: response.data.profile_picture || "", // Use "" if no picture
-          });
-          setIsLoggedIn(true);
-        } catch (error) {
-          console.error(
-            "Error fetching user:",
-            error.response?.data || error.message
-          );
-          setIsLoggedIn(true); // Ensure state resets on failure
+        console.log("User Data:", response.data);
+
+        setUser({
+          name: response.data.first_name || response.data.username,
+          profilePic: response.data.profile_picture || "",
+        });
+
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Error fetching user:", error.response?.data || error.message);
+
+        if (error.response?.status === 401) {
+          console.warn("Invalid token. Logging out.");
+          handleLogout();
         }
       }
     };
 
-    fetchUser();
-  }, [navigate]);
+    if (checkAuthToken()) {
+      fetchUser();
+    }
+  }, []);
 
-  const handleLogin = () => navigate("/login");
+  // ✅ Store token properly after login
+  useEffect(() => {
+    if (checkAuthToken()) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
+  // ✅ Handle navigation (scroll or route)
+  const handleNavClick = (page) => {
+    if (location.pathname === "/") {
+      const section = document.getElementById(page);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+    navigate(`/${page}`);
+  };
+
+  // ✅ Logout Function
   const handleLogout = () => {
+    console.log("Logging out...");
     localStorage.removeItem("accessToken");
     setIsLoggedIn(false);
     setShowProfileMenu(false);
     navigate("/login");
   };
 
-  const handleNavClick = (sectionId) => {
-    if (location.pathname === "/") {
-      const section = document.getElementById(sectionId);
-      if (section) {
-        scrollToSection(sectionId);
-        return;
-      }
-    }
-    navigate(`/${sectionId}`);
-  };
-
   return (
     <nav className="bg-gradient-to-r from-maroon-600 to-gray-800 shadow-md fixed mx-auto w-full z-30">
       <div className="container mx-auto px-10 py-4 flex justify-between items-center">
+        {/* Logo */}
         <div className="text-2xl text-white font-bold">
           <a href="/" className="hover:underline">VivahBandh</a>
         </div>
 
+        {/* Navbar Buttons */}
         <div className="hidden md:flex space-x-6">
           {["home", "about-us", "Guide", "partners", "contact-us"].map((label) => (
             <button
@@ -101,6 +125,7 @@ const Navbar = () => {
           ))}
         </div>
 
+        {/* User Authentication & Profile */}
         <div className="hidden md:flex space-x-4">
           <a href="https://forms.gle/fyaYY23Sg5N4yWR38" className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500">
             Register
@@ -136,7 +161,7 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <button onClick={handleLogin} className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-500">
+            <button onClick={() => navigate("/login")} className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-500">
               Login
             </button>
           )}
@@ -145,7 +170,6 @@ const Navbar = () => {
     </nav>
   );
 };
-
 
 const Hero = () => {
   // Add hooks for detecting when the text is in view

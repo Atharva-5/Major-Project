@@ -8,6 +8,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './homePage.css';
 import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
+import axiosInstance from "../axiosConfig";
 
 
 // Scroll function for smooth scrolling
@@ -23,7 +24,6 @@ const HorizontalLine = () => (
   <div className="border-t border-maroon-600 my-8 h-1" />
 );
 
-
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -31,30 +31,39 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  // Fetch user details on mount
+  // Fetch user details when component mounts
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
+
       if (token) {
         try {
           const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
             headers: { Authorization: `Bearer ${token}` },
           });
+
+          console.log("User Response:", response.data); // Debug: check API response
+
           setUser({
             name: response.data.first_name || response.data.username,
-            profilePic: response.data.profile_picture, // Adjust based on API response
+            profilePic: response.data.profile_picture || "", // Use "" if no picture
           });
           setIsLoggedIn(true);
         } catch (error) {
-          console.error("Error fetching user:", error);
-          setIsLoggedIn(false);
+          console.error(
+            "Error fetching user:",
+            error.response?.data || error.message
+          );
+          setIsLoggedIn(true); // Ensure state resets on failure
         }
       }
     };
+
     fetchUser();
   }, []);
 
   const handleLogin = () => navigate("/login");
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     setIsLoggedIn(false);

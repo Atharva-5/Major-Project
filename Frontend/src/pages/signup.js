@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './signup.css'; // Import CSS
+import './signup.css';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -9,43 +9,46 @@ const Signup = () => {
     email: '',
     password: '',
     phone: '',
-    caste: '',
     gender: '',
-    photo: null, // For file upload
+    photo: null,
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Handle input change
   const handleChange = (e) => {
-    if (e.target.name === 'photo') {
-      setFormData({ ...formData, photo: e.target.files[0] }); // Handle file upload
-    } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
+    const { name, value, files } = e.target;
+    setFormData({ ...formData, [name]: name === 'photo' ? files[0] : value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Create FormData for sending files
     const formDataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
-    });
+    Object.entries(formData).forEach(([key, value]) => formDataToSend.append(key, value));
 
     try {
       await axios.post('http://127.0.0.1:8000/auth/register/', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      navigate('/login'); // Redirect to login after success
-    } catch (err) {
+      navigate('/login');
+    } catch {
       setError('Registration failed. Please check your details.');
     }
   };
+
+  const renderInput = (field, type = 'text') => (
+    <div className="input-group" key={field}>
+      <input
+        type={type}
+        name={field}
+        value={formData[field]}
+        onChange={handleChange}
+        className="input-field"
+        placeholder=" "
+        required
+      />
+      <label className="floating-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+    </div>
+  );
 
   return (
     <div className="signup-container">
@@ -55,44 +58,23 @@ const Signup = () => {
 
         <div className="form-columns">
           <div className="form-column">
-            {['username', 'email', 'password'].map((field) => (
-              <div className="input-group" key={field}>
-                <label className="input-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                <input
-                  type={field === 'password' ? 'password' : 'text'}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  className="input-field"
-                  required
-                />
-              </div>
-            ))}
+            {renderInput('username')}
+            {renderInput('email')}
+            {renderInput('password', 'password')}
           </div>
 
           <div className="form-column">
-            {['phone', 'caste', 'gender'].map((field) => (
-              <div className="input-group" key={field}>
-                <label className="input-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                <input
-                  type="text"
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  className="input-field"
-                  required
-                />
-              </div>
-            ))}
+            {renderInput('phone')}
+            {renderInput('gender')}
             <div className="input-group">
-              <label className="input-label">Photo</label>
               <input type="file" name="photo" onChange={handleChange} className="input-field" />
+              <label className="floating-label">Photo</label>
             </div>
           </div>
         </div>
 
         <div className="button-container">
-          <button type="submit" className="signup-button">Sign Up</button>
+          <button type="submit" className="signup-button">Submit</button>
           <button type="button" className="login-button" onClick={() => navigate('/login')}>Login</button>
         </div>
       </form>

@@ -10,11 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='customuser',
-            name='caste',
-            field=models.CharField(blank=True, max_length=50, null=True),
-        ),
+        
         migrations.AddField(
             model_name='customuser',
             name='gender',

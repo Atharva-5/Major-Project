@@ -4,22 +4,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(to right, #ffeadb, #ffe5e0);
+  background: url('https://img.freepik.com/free-photo/background-beige-watercolor-with-color-stains-simple-style_53876-108710.jpg?t=st=1740551656~exp=1740555256~hmac=e9a3908523480cc6da0824137d4e8a13bfa2078905bce60326c934d28c3d808a&w=1380') 
+    no-repeat center center/cover;
   color: black;
   font-family: 'Arial', sans-serif;
 }
 
 /* Form Styling */
 .signup-form {
-  background: white;
-  /* White form for a clean look */
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent for blur visibility */
+  backdrop-filter: blur(10px); /* Blurs the background behind the form */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  width: 34rem;
+  width: 30rem;
   text-align: center;
-  border: 1px solid #ddd;
-  /* Soft border */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Soft border */
 }
 
 /* Title */
@@ -47,35 +48,53 @@
   width: 48%;
 }
 
-/* Input Fields */
+/* Input Group */
 .input-group {
-  margin-bottom: 1rem;
-  text-align: left;
+  position: relative;
+  margin-bottom: 1.5rem;
 }
 
-.input-label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-weight: bold;
-  color: #555;
+/* Floating Label */
+.floating-label {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #888;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  background: transparent;
 }
 
+/* Input Fields */
 .input-field {
   width: 100%;
-  padding: 0.6rem;
+  padding: 1rem 0.8rem 0.4rem;
   border-radius: 0.5rem;
   background: #fafafa;
   color: black;
   border: 1px solid #ccc;
   outline: none;
-  transition: border 0.3s ease-in-out;
+  transition: border 0.3s ease;
 }
 
+/* Focused Input and Filled Input */
+.input-field:focus + .floating-label,
+.input-field:not(:placeholder-shown) + .floating-label {
+  top: -0.6rem;
+  left: 0.6rem;
+  font-size: 0.8rem;
+  color: rgb(122, 91, 50);
+  padding: 0 0.3rem;
+}
+
+/* Focused Input Border */
 .input-field:focus {
-  border-color: crimson;
+  border-color: rgb(122, 91, 50);
 }
 
-/* Buttons */
+/* Buttons Container */
 .button-container {
   display: flex;
   justify-content: center;
@@ -92,25 +111,25 @@
   font-weight: bold;
   border: none;
   cursor: pointer;
-  transition: background 0.3s ease-in-out;
+  transition: background 0.3s ease;
 }
 
-/* Crimson Signup Button */
+/* Signup Button */
 .signup-button {
-  background-color: crimson;
+  background-color: rgb(182, 149, 106);
   color: white;
 }
 
 .signup-button:hover {
-  background-color: #b22222;
+  background-color: rgb(122, 91, 50);
 }
 
-/* Soft Blue Login Button */
+/* Login Button */
 .login-button {
-  background-color: #007bff;
+  background-color: rgb(182, 149, 106);
   color: white;
 }
 
 .login-button:hover {
-  background-color: #0056b3;
+  background-color: rgb(122, 91, 50);
 }

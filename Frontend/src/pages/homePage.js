@@ -199,7 +199,7 @@ const AboutUs = () => {
           className="flex-1 flex justify-center my-4 md:my-2 z-0" // Adjusted for mobile view
         >
           <img
-            src="https://knotsbyamp.com/wp-content/blogs.dir/1/files/jayanti-nidhish/PRA1322.JPG"
+            src="https://media.istockphoto.com/id/866987706/photo/indian-wedding-hands.jpg?s=612x612&w=0&k=20&c=6L-u9qhFPv9MjDnF4UK4AqjVbDKM4_8Xad72IHhwPZE="
             alt="About Us"
             className="w-full max-w-[400px] md:max-w-[600px] h-auto rounded-3xl object-cover mb-6"
           />

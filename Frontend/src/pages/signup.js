@@ -65,7 +65,21 @@ const Signup = () => {
 
           <div className="form-column">
             {renderInput('phone')}
-            {renderInput('gender')}
+            <div className="input-group">
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="input-field"
+                required
+              >
+                <option value="" disabled>Select Gender</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+              </select>
+              <label className="floating-label">Gender</label>
+            </div>
+
             <div className="input-group">
               <input type="file" name="photo" onChange={handleChange} className="input-field" />
               <label className="floating-label">Photo</label>
@@ -75,7 +89,9 @@ const Signup = () => {
 
         <div className="button-container">
           <button type="submit" className="signup-button">Submit</button>
-          <button type="button" className="login-button" onClick={() => navigate('/login')}>Login</button>
+          <button type="button" className="login-button" onClick={() => navigate('/login')}>
+            Login
+          </button>
         </div>
       </form>
     </div>

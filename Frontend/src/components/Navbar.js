@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { FaUserCircle, FaBell, FaBars, FaTimes } from "react-icons/fa";
+import { FaUserCircle, FaBell } from "react-icons/fa";
 
 const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
-    const [showMobileMenu, setShowMobileMenu] = useState(false);
     const [user, setUser] = useState({ name: "", profilePic: "" });
 
     const navigate = useNavigate();
@@ -38,53 +37,38 @@ const Navbar = () => {
 
                 setIsLoggedIn(true);
             } catch (error) {
-                console.error("Error fetching user:", error.response?.data || error.message);
-                if (error.response?.status === 401) {
-                    handleLogout();
-                }
+                if (error.response?.status === 401) handleLogout();
             }
         };
 
-        if (checkAuthToken()) {
-            fetchUser();
-        }
+        if (checkAuthToken()) fetchUser();
     }, []);
 
     useEffect(() => {
-        if (checkAuthToken()) {
-            setIsLoggedIn(true);
-        }
+        if (checkAuthToken()) setIsLoggedIn(true);
     }, []);
 
     const handleNavClick = (page) => {
         const section = document.getElementById(page);
-        if (section) {
-            section.scrollIntoView({ behavior: "smooth" });
-        } else {
-            if (location.pathname !== "/") {
-                navigate(`/#${page}`);
-            }
-        }
-        setShowMobileMenu(false);
+        section ? section.scrollIntoView({ behavior: "smooth" }) : location.pathname !== "/" && navigate(`/#${page}`);
     };
 
     const handleLogout = () => {
         localStorage.removeItem("accessToken");
         setIsLoggedIn(false);
         setShowProfileMenu(false);
-        setShowMobileMenu(false);
         navigate("/");
     };
 
     return (
-        <nav className="bg-gradient-to-r from-maroon-600 to-gray-800 shadow-md fixed w-full z-30">
-            <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <nav className="bg-gradient-to-r from-maroon-600 to-gray-800 shadow-md fixed mx-auto w-full z-30">
+            <div className="container mx-auto px-10 py-4 flex justify-between items-center">
                 {/* Logo */}
                 <div className="text-2xl text-white font-bold">
                     <a href="/" className="hover:underline">VivahBandh</a>
                 </div>
 
-                {/* Desktop Navbar */}
+                {/* Navbar Buttons */}
                 <div className="hidden md:flex space-x-6">
                     {["home", "about-us", "Guide", "partners", "contact-us"].map((label) => (
                         <button
@@ -97,13 +81,17 @@ const Navbar = () => {
                     ))}
                 </div>
 
-                {/* User Authentication & Profile - Desktop */}
-                <div className="hidden md:flex space-x-4">
+                {/* User Authentication & Profile */}
+                <div className="hidden md:flex space-x-4 items-center">
                     {isLoggedIn ? (
-                        <div className="relative">
-                            <button onClick={() => navigate("/profile")} className="relative text-white text-3xl mr-3">
+                        <div className="relative flex items-center space-x-4">
+                            {/* Bell Icon with Notification Dot */}
+                            <button onClick={() => navigate("/notifications")} className="relative text-white text-3xl">
                                 <FaBell className="hover:text-pink-400" />
+                                <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
                             </button>
+
+                            {/* Profile Icon */}
                             <button onClick={() => setShowProfileMenu(!showProfileMenu)} className="text-white text-3xl pt-1 hover:text-pink-400">
                                 {user.profilePic ? (
                                     <img
@@ -116,9 +104,12 @@ const Navbar = () => {
                                 )}
                             </button>
 
+                            {/* Profile Menu */}
                             {showProfileMenu && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg p-4 text-gray-800">
-                                    <p className="font-semibold">{user.name.charAt(0).toUpperCase() + user.name.slice(1)}</p>
+                                <div className="absolute right-0 mt-12 w-48 bg-white rounded-lg shadow-lg p-4 text-gray-800">
+                                    <p className="font-semibold">
+                                        {user.name.replace(/\b\w/g, (char) => char.toUpperCase())}
+                                    </p>
                                     <button
                                         onClick={handleLogout}
                                         className="mt-2 w-full text-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
@@ -134,68 +125,7 @@ const Navbar = () => {
                         </button>
                     )}
                 </div>
-
-                {/* Mobile Menu Icons */}
-                <div className="md:hidden flex items-center space-x-4">
-                    {isLoggedIn && (
-                        <button onClick={() => navigate("/profile")} className="text-white text-3xl">
-                            <FaBell className="hover:text-pink-400" />
-                        </button>
-                    )}
-                    <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="text-white text-3xl">
-                        {showMobileMenu ? <FaTimes /> : <FaBars />}
-                    </button>
-                </div>
             </div>
-
-            {/* Mobile Menu */}
-            {showMobileMenu && (
-                <div className="md:hidden bg-gray-800 text-white absolute top-16 left-0 w-full shadow-md">
-                    <div className="flex flex-col items-center space-y-4 py-4">
-                        {["home", "about-us", "Guide", "partners", "contact-us"].map((label) => (
-                            <button
-                                key={label}
-                                onClick={() => handleNavClick(label)}
-                                className="text-white hover:text-pink-400"
-                            >
-                                {label.replace("-", " ").toUpperCase()}
-                            </button>
-                        ))}
-
-                        {isLoggedIn ? (
-                            <div className="flex flex-col items-center space-y-3">
-                                <button onClick={() => setShowProfileMenu(!showProfileMenu)} className="text-white text-3xl hover:text-pink-400">
-                                    {user.profilePic ? (
-                                        <img
-                                            src={`http://127.0.0.1:8000${user.profilePic}`}
-                                            alt="Profile"
-                                            className="w-12 h-12 rounded-full border-2 border-white"
-                                        />
-                                    ) : (
-                                        <FaUserCircle />
-                                    )}
-                                </button>
-
-                                {showProfileMenu && (
-                                    <div className="bg-white rounded-lg shadow-lg p-4 text-gray-800 text-center">
-                                        <p className="font-semibold">{user.name.charAt(0).toUpperCase() + user.name.slice(1)}</p>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="mt-2 w-full text-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                        >
-                                            Logout
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <button onClick={() => navigate("/login")} className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-500">
-                                Login
-                            </button>
-                        )}
-                    </div>
-                </div>
-            )}
         </nav>
     );
 };

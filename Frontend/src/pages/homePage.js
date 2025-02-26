@@ -8,6 +8,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import './homePage.css';
 import { FaUserCircle } from "react-icons/fa";
 import axios from "axios";
+import axiosInstance from "../axiosConfig";
 
 
 // Scroll function for smooth scrolling
@@ -30,33 +31,30 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch user details on mount
+  // Fetch user details when component mounts
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
 
-      if (!token) {
-        setIsLoggedIn(false);
-        return;
-      }
+      if (token) {
+        try {
+          const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+          console.log("User Response:", response.data); // Debug: check API response
 
-        setUser({
-          name: response.data.first_name || response.data.username,
-          profilePic: response.data.profile_picture, // Adjust based on API response
-        });
-
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Error fetching user:", error.response?.data || error.message);
-        if (error.response?.status === 401) {
-          localStorage.removeItem("accessToken");
-          setIsLoggedIn(false);
-          navigate("/login");
+          setUser({
+            name: response.data.first_name || response.data.username,
+            profilePic: response.data.profile_picture || "", // Use "" if no picture
+          });
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error(
+            "Error fetching user:",
+            error.response?.data || error.message
+          );
+          setIsLoggedIn(true); // Ensure state resets on failure
         }
       }
     };
@@ -65,6 +63,7 @@ const Navbar = () => {
   }, [navigate]);
 
   const handleLogin = () => navigate("/login");
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     setIsLoggedIn(false);

@@ -85,15 +85,19 @@ const Navbar = () => {
 
   // ✅ Handle navigation (scroll or route)
   const handleNavClick = (page) => {
-    if (location.pathname === "/") {
-      const section = document.getElementById(page);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-        return;
+    const section = document.getElementById(page);
+
+    if (section) {
+      // Scroll smoothly to the section
+      section.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // Ensure navigation only happens if the section is not on the home page
+      if (location.pathname !== "/") {
+        navigate(`/#${page}`); // Use hash for direct linking
       }
     }
-    navigate(`/${page}`);
   };
+
 
   // ✅ Logout Function
   const handleLogout = () => {
@@ -125,13 +129,11 @@ const Navbar = () => {
           ))}
         </div>
 
+
         {/* User Authentication & Profile */}
         <div className="hidden md:flex space-x-4">
-          <a href="https://forms.gle/fyaYY23Sg5N4yWR38" className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500">
-            Register
-          </a>
-          <a href="https://forms.gle/k93HJE52zeqt5Nkz9" className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500">
-            Get Masika
+          <a href='./profilePage.js' className="bg-maroon-600 font-bold text-white px-4 py-2 rounded-full hover:bg-pink-500">
+            People
           </a>
 
           {isLoggedIn ? (
@@ -151,6 +153,12 @@ const Navbar = () => {
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg p-4 text-gray-800">
                   <p className="font-semibold">{user.name}</p>
+                  <button
+                    onClick={() => navigate("/profile")}
+                    className="mt-2 w-full text-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Profile
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="mt-2 w-full text-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"

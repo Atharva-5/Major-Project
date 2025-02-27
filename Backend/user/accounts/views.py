@@ -17,7 +17,7 @@ User = get_user_model()
 
 @api_view(['GET'])
 # Protect the API so only logged-in users can access it
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 def send_random_profiles(request, user_id):
     # Get all users excluding the given user_id
     users = User.objects.exclude(id=user_id)

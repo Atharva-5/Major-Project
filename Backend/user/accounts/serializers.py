@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Connection
 
 User = get_user_model()
 
@@ -32,3 +33,9 @@ class LoginSerializer(serializers.Serializer):
                 'access': str(refresh.access_token),
             }
         raise serializers.ValidationError("Invalid credentials")
+
+
+class ConnectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Connection
+        fields = '__all__'

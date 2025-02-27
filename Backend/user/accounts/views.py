@@ -9,6 +9,8 @@ from .serializers import UserSerializer, LoginSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import random
+from .models import Connection
+from .serializers import ConnectionSerializer
 
 User = get_user_model()
 
@@ -38,6 +40,7 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
     def perform_create(self, serializer):
         """Handle file upload properly"""
         user = serializer.save()
@@ -54,3 +57,14 @@ class LoginView(generics.GenericAPIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ConnectionCreateView(generics.CreateAPIView):
+    queryset = Connection.objects.all()
+    serializer_class = ConnectionSerializer
+
+class ConnectionListByReceiverView(generics.ListAPIView):
+    serializer_class = ConnectionSerializer
+
+    def get_queryset(self):
+        receiver_id = self.kwargs.get("receiver_id")  # Get receiver ID from URL
+        return Connection.objects.filter(receiver_id=receiver_id)  # Filter by receiver

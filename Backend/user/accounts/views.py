@@ -8,9 +8,22 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer, LoginSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+import random
 
 User = get_user_model()
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])  # Protect the API so only logged-in users can access it
+def send_random_profiles(request, user_id):
+    # Get all users excluding the given user_id
+    users = User.objects.exclude(id=user_id)
+
+    # Select 10 random users
+    random_users = random.sample(list(users), min(10, users.count()))
+
+    # Serialize and return the data
+    serializer = UserSerializer(random_users, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])

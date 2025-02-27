@@ -14,8 +14,10 @@ from .serializers import ConnectionSerializer
 
 User = get_user_model()
 
+
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])  # Protect the API so only logged-in users can access it
+# Protect the API so only logged-in users can access it
+@permission_classes([IsAuthenticated])
 def send_random_profiles(request, user_id):
     # Get all users excluding the given user_id
     users = User.objects.exclude(id=user_id)
@@ -40,7 +42,6 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
     def perform_create(self, serializer):
         """Handle file upload properly"""
         user = serializer.save()
@@ -57,14 +58,18 @@ class LoginView(generics.GenericAPIView):
         if serializer.is_valid():
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 class ConnectionCreateView(generics.CreateAPIView):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
+
 
 class ConnectionListByReceiverView(generics.ListAPIView):
     serializer_class = ConnectionSerializer
 
     def get_queryset(self):
-        receiver_id = self.kwargs.get("receiver_id")  # Get receiver ID from URL
-        return Connection.objects.filter(receiver_id=receiver_id)  # Filter by receiver
+        receiver_id = self.kwargs.get(
+            "receiver_id")  # Get receiver ID from URL
+        # Filter by receiver
+        return Connection.objects.filter(receiver_id=receiver_id)

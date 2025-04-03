@@ -16,16 +16,15 @@ User = get_user_model()
 
 
 @api_view(['GET'])
-# Protect the API so only logged-in users can access it
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def send_random_profiles(request, user_id):
-    # Get all users excluding the given user_id
     users = User.objects.exclude(id=user_id)
 
-    # Select 10 random users
-    random_users = random.sample(list(users), min(10, users.count()))
+    if users.exists():  # Ensure there are users available
+        random_users = random.sample(list(users), min(10, users.count()))
+    else:
+        random_users = []  # Return an empty list if no users exist
 
-    # Serialize and return the data
     serializer = UserSerializer(random_users, many=True)
     return Response(serializer.data)
 
@@ -67,15 +66,12 @@ def send_connection_request(request):
     if not receiver:
         return Response({"error": "User not found"}, status=404)
 
-    # Check if request already exists
     existing_request = Connection.objects.filter(
         sender=request.user, receiver=receiver).first()
     if existing_request:
         return Response({"message": "Request already sent"}, status=400)
 
-    # Create connection request
     Connection.objects.create(sender=request.user, receiver=receiver)
-
     return Response({"message": "Connection request sent successfully"}, status=201)
 
 

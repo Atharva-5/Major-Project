@@ -16,16 +16,15 @@ User = get_user_model()
 
 
 @api_view(['GET'])
-# Protect the API so only logged-in users can access it
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def send_random_profiles(request, id):
-    # Get all users excluding the given user_id
     users = User.objects.exclude(id=id)
 
-    # Select 10 random users
-    random_users = random.sample(list(users), min(10, users.count()))
+    if users.exists():  # Ensure there are users available
+        random_users = random.sample(list(users), min(10, users.count()))
+    else:
+        random_users = []  # Return an empty list if no users exist
 
-    # Serialize and return the data
     serializer = UserSerializer(random_users, many=True)
     return Response(serializer.data)
 
@@ -36,6 +35,53 @@ def get_user_details(request):
     user = request.user
     serializer = UserSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_filtered_profiles(request):
+    caste = request.query_params.get('caste')
+    gender = request.query_params.get('gender')
+
+    users = User.objects.exclude(id=request.user.id)
+
+    if caste:
+        users = users.filter(caste=caste)
+    if gender:
+        users = users.filter(gender=gender)
+
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_connection_request(request):
+    receiver_id = request.data.get('receiver_id')
+
+    if not receiver_id:
+        return Response({"error": "Receiver ID is required"}, status=400)
+
+    receiver = User.objects.filter(id=receiver_id).first()
+    if not receiver:
+        return Response({"error": "User not found"}, status=404)
+
+    existing_request = Connection.objects.filter(
+        sender=request.user, receiver=receiver).first()
+    if existing_request:
+        return Response({"message": "Request already sent"}, status=400)
+
+    Connection.objects.create(sender=request.user, receiver=receiver)
+    return Response({"message": "Connection request sent successfully"}, status=201)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_notifications(request):
+    notifications = Connection.objects.filter(receiver=request.user).values(
+        "id", "sender__id", "sender__username", "created_at"
+    )
+    return Response(notifications)
 
 
 class RegisterView(generics.CreateAPIView):

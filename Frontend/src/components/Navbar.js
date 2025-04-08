@@ -125,6 +125,17 @@ const Navbar = () => {
                                     >
                                         Cancel
                                     </button>
+
+                                    <button
+                                        onClick={() => {
+                                        setShowProfileMenu(false);
+                                        navigate("/userprofile");
+                                    }}
+                                        className="mt-2 w-full text-center bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                    >
+                                        User Profile
+                                    </button>
+
                                 </div>
                             )}
                         </div>

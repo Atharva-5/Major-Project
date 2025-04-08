@@ -1,0 +1,106 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: #f5f0e6;
+    background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+    background-size: cover;
+  }
+  
+  .profile-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  
+  .profile-card {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-card h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+  }
+  
+  .form-group {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 14px 12px 14px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fff;
+    transition: border 0.3s;
+  }
+  
+  .input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .input:focus + .floating-label,
+  .input:not(:placeholder-shown) + .floating-label,
+  .input:valid + .floating-label,
+  select:valid + .floating-label {
+    transform: translateY(-24px);
+    font-size: 13px;
+    color: #007bff;
+  }
+  
+  .floating-label {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0 4px;
+    color: #777;
+    font-size: 16px;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+  
+  .file-input label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .photo-preview {
+    margin-top: 10px;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    background-color: #007bff;
+    color: #fff;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .submit-btn:hover {
+    background-color: #0056b3;
+  }
+  

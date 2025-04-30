@@ -74,7 +74,7 @@ const ProfilesPage = () => {
                                 transition={{ duration: 0.3 }}
                             >
                                 <motion.img
-                                    src={"http://127.0.0.1:8000${user.profilePic}" || "https://via.placeholder.com/150"}
+                                    src={`http://127.0.0.1:8000${user.photo}` || `https://via.placeholder.com/150`}
                                     alt="Profile"
                                     className="w-32 h-32 mx-auto rounded-full border-4 border-white shadow-lg object-cover"
                                     whileHover={{ scale: 1.1 }}

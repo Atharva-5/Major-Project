@@ -60,7 +60,7 @@ const NotificationsPage = () => {
                             transition={{ duration: 0.2 }}
                         >
                             <img
-                                src={user.photo}
+                                src={`http://127.0.0.1:8000${user.photo}`}
                                 alt="Profile"
                                 className="w-14 h-14 rounded-full border-2 border-gray-300 object-cover"
                             />

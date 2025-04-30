@@ -5,12 +5,13 @@ from rest_framework import status, generics
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, LoginSerializer, ConnectionSerializer, ProfileUpdateSerializer,NotificationSerializer
-from rest_framework.decorators import api_view, permission_classes
+from .serializers import UserSerializer, LoginSerializer, ConnectionSerializer, ProfileUpdateSerializer, NotificationSerializer
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import random
 from .models import Connection
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 User = get_user_model()
 
@@ -28,6 +29,7 @@ def send_random_profiles(request):
     serializer = UserSerializer(random_users, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def get_user_by_id(request, user_id):
     try:
@@ -36,6 +38,7 @@ def get_user_by_id(request, user_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -92,15 +95,16 @@ def get_notifications(request):
     return Response(notifications)
 
 
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+class RegisterView(APIView):
+    parser_classes = [MultiPartParser, FormParser]  # ✅ THIS IS CRUCIAL
+
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)  # ✅ Helps you debug invalid form fields
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(generics.GenericAPIView):

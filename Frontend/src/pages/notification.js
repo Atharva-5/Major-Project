@@ -37,7 +37,7 @@ const NotificationsPage = () => {
                     id: senderId,
                     username: userRes.data.username,
                     age: userRes.data.age,
-                    profile_picture: userRes.data.profile_picture,
+                    photo: userRes.data.photo,
                 });
             }
 
@@ -60,7 +60,7 @@ const NotificationsPage = () => {
                             transition={{ duration: 0.2 }}
                         >
                             <img
-                                src={user.profile_picture}
+                                src={user.photo}
                                 alt="Profile"
                                 className="w-14 h-14 rounded-full border-2 border-gray-300 object-cover"
                             />

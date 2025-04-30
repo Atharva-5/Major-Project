@@ -5,22 +5,22 @@ import './signup.css';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
     phone: '',
     caste: '',
     gender: '',
     age: '',
-    profile_photo: null,
+    photo: null,
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'profile_photo') {
-      setFormData({ ...formData, profile_photo: files[0] });
+    if (name === 'photo') {
+      setFormData({ ...formData, photo: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -66,21 +66,20 @@ const Signup = () => {
         <h2 className="signup-title">Sign Up</h2>
         {error && <p className="signup-error">{error}</p>}
 
-        {renderInput('name')}
-        {renderInput('email', 'email')}
+        {renderInput('username')}
+        {renderInput('email')}
         {renderInput('phone')}
         {renderInput('caste')}
         {renderInput('gender')}
         {renderInput('age')}
-        {renderInput('password', 'password')}
+        {renderInput('password')}
 
         <div className="input-group">
           <input
             type="file"
-            name="profile_photo"
+            name="photo"
             onChange={handleChange}
             className="input-field"
-            required
           />
           <label className="floating-label">Profile Photo</label>
         </div>

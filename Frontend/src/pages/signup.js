@@ -68,7 +68,7 @@ const Signup = () => {
 
         {renderInput('name')}
         {renderInput('email', 'email')}
-        {renderInput('phone', 'tel')}
+        {renderInput('phone')}
         {renderInput('caste')}
         {renderInput('gender')}
         {renderInput('age')}

@@ -19,19 +19,32 @@ const NotificationsPage = () => {
 
     const fetchNotifications = async (token) => {
         try {
+            const all_data = [];
             const response = await axios.get("http://127.0.0.1:8000/auth/notifications/", {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setNotifications(response.data);
+
+            for (let i = 0; i < response.data.length; i++) {
+                console.log("Sender : ",response.data[i].sender__id);
+                console.log("http://127.0.0.1:8000/auth/user/" + response.data[i].sender__id + "/");
+                const temp = await axios.get("http://127.0.0.1:8000/auth/user/" + response.data[i].sender__id + "/", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                all_data.push(temp.data);
+            }
+
+            setNotifications(all_data);
+            console.log("All data : ",all_data);
         } catch (error) {
             console.error("Failed to fetch notifications:", error.response?.data || error);
         }
     };
 
+
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-pink-100 to-red-600 flex flex-col items-center pt-20">
             <h1 className="text-gray-800 text-2xl font-bold mb-6">Connection Requests 🔔</h1>
-
             <div className="w-full max-w-lg space-y-6">
                 {notifications.length > 0 ? (
                     notifications.map((user) => (

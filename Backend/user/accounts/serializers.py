@@ -47,3 +47,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['phone', 'email', 'caste', 'gender', 'photo']
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username','phone','photo']

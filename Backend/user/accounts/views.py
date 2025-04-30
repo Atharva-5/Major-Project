@@ -5,7 +5,7 @@ from rest_framework import status, generics
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, LoginSerializer, ConnectionSerializer, ProfileUpdateSerializer
+from .serializers import UserSerializer, LoginSerializer, ConnectionSerializer, ProfileUpdateSerializer,NotificationSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import random
@@ -28,6 +28,14 @@ def send_random_profiles(request):
     serializer = UserSerializer(random_users, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_user_by_id(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        serializer = NotificationSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

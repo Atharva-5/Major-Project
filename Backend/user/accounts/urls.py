@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import AddProfileView, get_user_details, RegisterView, LoginView, send_random_profiles, ConnectionCreateView, send_connection_request, ConnectionListByReceiverView, get_filtered_profiles, get_notifications
+from .views import AddProfileView,get_user_by_id, get_user_details, RegisterView, LoginView, send_random_profiles, ConnectionCreateView, send_connection_request, ConnectionListByReceiverView, get_filtered_profiles, get_notifications
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -12,6 +12,8 @@ urlpatterns = [
 
     # API for explore profile page to get random profiles
     path('profiles/random/', send_random_profiles, name='random-profiles'),
+
+    path('user/<int:user_id>/', get_user_by_id, name='get-user-by-id'),
 
     # filtered profile
     path('profiles/', get_filtered_profiles, name='filtered-profiles'),

@@ -19,28 +19,33 @@ const NotificationsPage = () => {
 
     const fetchNotifications = async (token) => {
         try {
-            const all_data = [];
+            const allData = [];
             const response = await axios.get("http://127.0.0.1:8000/auth/notifications/", {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
             for (let i = 0; i < response.data.length; i++) {
-                console.log("Sender : ",response.data[i].sender__id);
-                console.log("http://127.0.0.1:8000/auth/user/" + response.data[i].sender__id + "/");
-                const temp = await axios.get("http://127.0.0.1:8000/auth/user/" + response.data[i].sender__id + "/", {
-                    headers: { Authorization: `Bearer ${token}` },
+                const senderId = response.data[i].sender__id;
+
+                const userRes = await axios.get(
+                    `http://127.0.0.1:8000/auth/user/${senderId}/`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                // Push only required data
+                allData.push({
+                    id: senderId,
+                    username: userRes.data.username,
+                    age: userRes.data.age,
+                    profile_picture: userRes.data.profile_picture,
                 });
-                all_data.push(temp.data);
             }
 
-            setNotifications(all_data);
-            console.log("All data : ",all_data);
+            setNotifications(allData);
         } catch (error) {
             console.error("Failed to fetch notifications:", error.response?.data || error);
         }
     };
-
-
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-pink-100 to-red-600 flex flex-col items-center pt-20">
@@ -57,11 +62,11 @@ const NotificationsPage = () => {
                             <img
                                 src={user.profile_picture}
                                 alt="Profile"
-                                className="w-14 h-14 rounded-full border-2 border-gray-300"
+                                className="w-14 h-14 rounded-full border-2 border-gray-300 object-cover"
                             />
                             <div className="flex-1">
-                                <h2 className="text-lg font-semibold">{user.title}, {user.age}</h2>
-                                <p className="text-sm text-gray-600">{user.bio}</p>
+                                <h2 className="text-lg font-semibold">{user.username}</h2>
+                                <p className="text-sm text-gray-600">Age: {user.age}</p>
                             </div>
                             <div className="flex space-x-3">
                                 <motion.button

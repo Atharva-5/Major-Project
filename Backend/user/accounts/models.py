@@ -6,13 +6,15 @@ from django.conf import settings
 class CustomUser(AbstractUser):
     # Explicitly setting the primary key
     id = models.BigAutoField(primary_key=True)
-    user_id = models.CharField(max_length=10, unique=True, editable=False, null=False)  # Auto-generated User ID
+    user_id = models.CharField(
+        max_length=10, unique=True, editable=False, null=False)  # Auto-generated User ID
     # Ensuring password field is not editable
     password = models.CharField(max_length=128, verbose_name='password')
-    
+
     phone = models.CharField(max_length=15, blank=True, null=True)
     caste = models.CharField(max_length=15, blank=True, null=True)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')], blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=[(
+        'Male', 'Male'), ('Female', 'Female')], blank=True, null=True)
     photo = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
     def __str__(self):

@@ -1,11 +1,11 @@
-from django.shortcuts import get_object_or_404,render
+from django.shortcuts import get_object_or_404, render
 
 from rest_framework.response import Response
-from rest_framework import status, generics, status
+from rest_framework import status, generics
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import UserSerializer, LoginSerializer,ConnectionSerializer,ProfileUpdateSerializer
+from .serializers import UserSerializer, LoginSerializer, ConnectionSerializer, ProfileUpdateSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import random
@@ -17,8 +17,8 @@ User = get_user_model()
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def send_random_profiles(request, id):
-    users = User.objects.exclude(id=id)
+def send_random_profiles(request):
+    users = User.objects.exclude(id=request.user.id)
 
     if users.exists():  # Ensure there are users available
         random_users = random.sample(list(users), min(10, users.count()))
@@ -112,11 +112,13 @@ class ConnectionListByReceiverView(generics.ListAPIView):
             "receiver_id")  # Get receiver ID from URL
         # Filter by receiver
         return Connection.objects.filter(receiver_id=receiver_id)
-    
+
+
 class AddProfileView(APIView):
     def post(self, request, id):
         user = get_object_or_404(User, id=id)
-        serializer = ProfileUpdateSerializer(user, data=request.data, partial=True)
+        serializer = ProfileUpdateSerializer(
+            user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)

@@ -4,14 +4,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url('https://img.freepik.com/free-photo/background-beige-watercolor-with-color-stains-simple-style_53876-108710.jpg?t=st=1740551656~exp=1740555256~hmac=e9a3908523480cc6da0824137d4e8a13bfa2078905bce60326c934d28c3d808a&w=1380') 
-    no-repeat center center/cover;
+  background: #faf1da;
   font-family: 'Arial', sans-serif;
 }
 
 /* Form */
 .login-form {
-  background: rgba(255, 255, 255, 0.2);
+  background: #ffd6a4bb;
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 1rem;
@@ -67,8 +66,8 @@
 }
 
 /* Floating effect */
-.input-field:focus + .floating-label,
-.input-field:not(:placeholder-shown) + .floating-label {
+.input-field:focus+.floating-label,
+.input-field:not(:placeholder-shown)+.floating-label {
   top: -0.6rem;
   left: 0.6rem;
   font-size: 0.8rem;
@@ -88,17 +87,23 @@
   margin-top: 1rem;
 }
 
-.login-button, .signin-button {
+.login-button,
+.signin-button {
   width: 45%;
   padding: 0.6rem;
   border-radius: 0.5rem;
-  font-weight: bold;
+  font-weight: bolder;
   border: none;
   cursor: pointer;
-  background-color: rgb(182, 149, 106);
+  background-color: #e1792f;
   color: white;
   transition: background 0.3s ease-in-out;
 }
 
-.login-button:hover { background-color: #7f4a05; }
-.signin-button:hover { background-color: #7f4a05; }
+.login-button:hover {
+  background-color: #b1500a;
+}
+
+.signin-button:hover {
+  background-color: #b1500a;
+}

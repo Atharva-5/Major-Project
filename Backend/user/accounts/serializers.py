@@ -5,11 +5,13 @@ from .models import Connection
 
 User = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'user_id', 'username','password']
-        extra_kwargs = {'password': {'write_only': True},'user_id': {'read_only': True}}
+        fields = ['id', 'user_id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True},
+                        'user_id': {'read_only': True}}
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -23,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
-    
+
     def validate(self, data):
         user = User.objects.filter(username=data['username']).first()
         if user and user.check_password(data['password']):
@@ -39,6 +41,7 @@ class ConnectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Connection
         fields = '__all__'
+
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:

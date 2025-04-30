@@ -12,33 +12,47 @@ const Signup = () => {
     caste: '',
     gender: '',
     age: '',
-    photo: null,
+    photo: '',
   });
+
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === 'photo') {
-      setFormData({ ...formData, photo: files[0] });
+      const file = files[0];
+      console.log('Selected file:', file);  // ✅ Debug log
+      setFormData({ ...formData, photo: file });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     const form = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       form.append(key, value);
     });
 
+    // Debugging: log all form data
+    for (let [key, value] of form.entries()) {
+      console.log(`${key}:`, value);
+    }
+
     try {
       await axios.post('http://127.0.0.1:8000/auth/register/', form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       navigate('/login');
-    } catch {
+    } catch (err) {
+      console.error(err.response?.data || err.message);
       setError('Registration failed. Please check your details.');
     }
   };
@@ -67,21 +81,24 @@ const Signup = () => {
         {error && <p className="signup-error">{error}</p>}
 
         {renderInput('username')}
-        {renderInput('email')}
+        {renderInput('email', 'email')}
         {renderInput('phone')}
         {renderInput('caste')}
         {renderInput('gender')}
-        {renderInput('age')}
-        {renderInput('password')}
+        {renderInput('age', 'number')}
+        {renderInput('password', 'password')}
 
         <div className="input-group">
           <input
             type="file"
             name="photo"
+            accept="image/*"
             onChange={handleChange}
             className="input-field"
+            required
           />
-          <label className="floating-label">Profile Photo</label>
+
+          <label className="floating-label">Profile Photo (JPEG)</label>
         </div>
 
         <div className="button-container">

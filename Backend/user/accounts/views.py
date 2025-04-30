@@ -125,9 +125,8 @@ class ConnectionListByReceiverView(generics.ListAPIView):
 class AddProfileView(APIView):
     def post(self, request, id):
         user = get_object_or_404(User, id=id)
-        serializer = ProfileUpdateSerializer(
-            user, data=request.data, partial=True)
+        serializer = ProfileUpdateSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Profile updated successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -62,7 +62,7 @@ const UserProfile = () => {
         }
       }
 
-      await axios.post(`http://localhost:8000/api/addprofile/${userId}`, formData, {
+      await axios.post(`http://localhost:8000/auth/addprofile/${userId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

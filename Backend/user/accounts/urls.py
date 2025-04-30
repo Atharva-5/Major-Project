@@ -32,5 +32,5 @@ urlpatterns = [
     path('connections/<int:receiver_id>/',
          ConnectionListByReceiverView.as_view(), name='connection-list-by-receiver'),
 
-    path('addprofile/<int:id>/', AddProfileView.as_view(), name='add-profile'),
+    path('addprofile/<int:id>', AddProfileView.as_view(), name='add-profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,57 +1,71 @@
 /* Background and Centering */
+body {
+  padding-top: 80px;
+  /* Match navbar height */
+}
+
 .signup-container {
   min-height: 100vh;
+  padding-top: 100px;
+  /* Add space equal to or greater than navbar height */
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url('https://img.freepik.com/free-photo/background-beige-watercolor-with-color-stains-simple-style_53876-108710.jpg?t=st=1740551656~exp=1740555256~hmac=e9a3908523480cc6da0824137d4e8a13bfa2078905bce60326c934d28c3d808a&w=1380') 
-    no-repeat center center/cover;
-  color: black;
-  font-family: 'Arial', sans-serif;
+  /* Start below navbar */
+  background: linear-gradient(to right, #f0f0f0, #f7f7f7);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 
 /* Form Styling */
 .signup-form {
-  background: rgba(255, 255, 255, 0.2); /* Semi-transparent for blur visibility */
-  backdrop-filter: blur(10px); /* Blurs the background behind the form */
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  width: 30rem;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 2.5rem 2rem;
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Soft border */
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 /* Title */
 .signup-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  color: #444;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #2e2e2e;
 }
 
 /* Error Message */
 .signup-error {
-  color: red;
+  color: #d33;
+  font-size: 0.95rem;
   margin-bottom: 1rem;
-}
-
-/* Two-Column Layout */
-.form-columns {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-}
-
-.form-column {
-  width: 48%;
 }
 
 /* Input Group */
 .input-group {
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
+}
+
+/* Input Fields */
+.input-field {
+  width: 100%;
+  padding: 1rem 0.8rem 0.6rem;
+  border-radius: 0.6rem;
+  background: #fffdfc;
+  border: 1.5px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #a67642;
 }
 
 /* Floating Label */
@@ -60,76 +74,70 @@
   left: 0.8rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1rem;
   color: #888;
+  font-size: 1rem;
   pointer-events: none;
+  background-color: transparent;
   transition: all 0.3s ease;
-  background: transparent;
 }
 
-/* Input Fields */
-.input-field {
-  width: 100%;
-  padding: 1rem 0.8rem 0.4rem;
-  border-radius: 0.5rem;
-  background: #fafafa;
-  color: black;
-  border: 1px solid #ccc;
-  outline: none;
-  transition: border 0.3s ease;
-}
-
-/* Focused Input and Filled Input */
-.input-field:focus + .floating-label,
-.input-field:not(:placeholder-shown) + .floating-label {
-  top: -0.6rem;
+.input-field:focus+.floating-label,
+.input-field:not(:placeholder-shown)+.floating-label {
+  top: -0.7rem;
   left: 0.6rem;
-  font-size: 0.8rem;
-  color: rgb(122, 91, 50);
+  font-size: 0.75rem;
+  color: #5e4227;
+  background: #fffdfc;
   padding: 0 0.3rem;
 }
 
-/* Focused Input Border */
-.input-field:focus {
-  border-color: rgb(122, 91, 50);
-}
-
-/* Buttons Container */
+/* Button Container */
 .button-container {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-top: 1rem;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
 }
 
 /* Buttons */
 .signup-button,
 .login-button {
-  width: 45%;
-  padding: 0.6rem;
-  border-radius: 0.5rem;
+  flex: 1;
+  padding: 0.7rem 1rem;
   font-weight: bold;
+  border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-/* Signup Button */
-.signup-button {
-  background-color: rgb(182, 149, 106);
+  background-color: #e1201d;
   color: white;
-}
-
-.signup-button:hover {
-  background-color: rgb(122, 91, 50);
-}
-
-/* Login Button */
-.login-button {
-  background-color: rgb(182, 149, 106);
-  color: white;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .login-button:hover {
-  background-color: rgb(122, 91, 50);
+  background-color: #035fa0 !important;
+}
+
+.signup-button:hover {
+  background-color: rgb(157, 11, 6) !important;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .signup-form {
+    padding: 2rem 1.2rem;
+  }
+
+  .signup-title {
+    font-size: 1.6rem;
+  }
+
+  .button-container {
+    flex-direction: column;
+  }
+
+  .signup-button,
+  .login-button {
+    width: 100%;
+  }
 }

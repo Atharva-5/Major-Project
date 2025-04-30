@@ -81,7 +81,7 @@ const ProfilesPage = () => {
                                     transition={{ duration: 0.3 }}
                                 />
                                 <h2 className="mt-4 text-2xl font-bold text-gray-900">
-                                    {user.title || user.username}, {user.age}
+                                    {user.title || user.username} {user.age}
                                 </h2>
                                 <p className="text-gray-600 text-sm px-4 mt-2">{user.bio || "No bio available."}</p>
                                 <motion.div

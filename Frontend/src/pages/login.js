@@ -18,10 +18,10 @@ const Login = () => {
     try {
       const response = await axios.post("http://127.0.0.1:8000/auth/login/", formData);
       console.log("API Response:", response.data); // ✅ Check if 'access' and 'refresh' exist
-  
-      localStorage.setItem("accessToken", response.data.access); 
+
+      localStorage.setItem("accessToken", response.data.access);
       localStorage.setItem("refreshToken", response.data.refresh);
-  
+
       console.log("Stored AccessToken:", localStorage.getItem("accessToken")); // ✅ Verify storage
       navigate("/home");
     } catch (err) {
@@ -29,7 +29,7 @@ const Login = () => {
       setError("Login failed. Please check your credentials.");
     }
   };
-  
+
 
   return (
     <div className="login-container">
@@ -46,7 +46,7 @@ const Login = () => {
             required
           />
           <label className={`floating-label ${formData.username ? "filled" : ""}`}>
-            Username
+            Name
           </label>
         </div>
         <div className="input-group">
@@ -63,10 +63,8 @@ const Login = () => {
           </label>
         </div>
         <div className="button-container">
-        <button type="submit" className="login-button">
-          Submit
-        </button>
-        <button type="button" className="signin-button" onClick={() => navigate('/signup')}>Signup</button>
+          <button type="button" className="signin-button" onClick={() => navigate('/signup')}>Register Here</button>
+          <button type="submit" className="login-button">Login</button>
         </div>
       </form>
     </div>

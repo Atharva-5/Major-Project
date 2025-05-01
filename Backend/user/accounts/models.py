@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 
 class CustomUser(AbstractUser):
@@ -29,6 +30,19 @@ class CustomUser(AbstractUser):
         super().save(*args, **kwargs)
 
 
+class Notification(models.Model):
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="sent_notifications", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="received_notifications", on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification from {self.sender} to {self.receiver}"
+
+
 class Connection(models.Model):
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_connections')
@@ -39,3 +53,22 @@ class Connection(models.Model):
 
     def __str__(self):
         return f"{self.sender.username} → {self.receiver.username}"
+
+    def accept(self):
+        self.is_accepted = True
+        self.save()
+        # Create a notification for the sender that the request was accepted
+        Notification.objects.create(
+            sender=self.receiver,
+            receiver=self.sender,
+            message=f"{self.receiver.username} has accepted your connection request."
+        )
+
+    def reject(self):
+        self.delete()  # Remove the connection if rejected
+        # Create a notification for the sender that the request was rejected
+        Notification.objects.create(
+            sender=self.receiver,
+            receiver=self.sender,
+            message=f"{self.receiver.username} has rejected your connection request."
+        )

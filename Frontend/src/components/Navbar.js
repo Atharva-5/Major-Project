@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { FaUserCircle, FaBell, FaUsers } from "react-icons/fa";
@@ -16,41 +16,51 @@ const Navbar = () => {
         return token !== null && token !== "";
     };
 
+    const fetchUser = useCallback(async () => {
+        const token = localStorage.getItem("accessToken");
+
+        if (!token) {
+            setIsLoggedIn(false);
+            return;
+        }
+
+        try {
+            const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            setUser({
+                name: response.data.first_name || response.data.username,
+                profilePic: response.data.photo || "",
+            });
+
+            setIsLoggedIn(true);
+        } catch (error) {
+            if (error.response?.status === 401) handleLogout();
+        }
+    }, []);
+
     useEffect(() => {
-        const fetchUser = async () => {
-            const token = localStorage.getItem("accessToken");
+        if (checkAuthToken()) fetchUser();
+    }, [fetchUser]);
 
-            if (!token) {
-                setIsLoggedIn(false);
-                return;
-            }
-
-            try {
-                const response = await axios.get("http://127.0.0.1:8000/auth/user/", {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                setUser({
-                    name: response.data.first_name || response.data.username,
-                    profilePic: response.data.photo || "",
-                });
-
-                setIsLoggedIn(true);
-            } catch (error) {
-                if (error.response?.status === 401) handleLogout();
-            }
+    useEffect(() => {
+        const handleLoginSuccess = () => {
+            fetchUser();
         };
 
-        if (checkAuthToken()) fetchUser();
-    }, []);
+        window.addEventListener("loginSuccess", handleLoginSuccess);
 
-    useEffect(() => {
-        if (checkAuthToken()) setIsLoggedIn(true);
-    }, []);
+        return () => {
+            window.removeEventListener("loginSuccess", handleLoginSuccess);
+        };
+    }, [fetchUser]);
 
     const handleNavClick = (page) => {
         const section = document.getElementById(page);
-        section ? section.scrollIntoView({ behavior: "smooth" }) : location.pathname !== "/" && navigate(`/#${page}`);
+        section
+            ? section.scrollIntoView({ behavior: "smooth" })
+            : location.pathname !== "/" && navigate(`/#${page}`);
     };
 
     const handleLogout = () => {
@@ -81,14 +91,13 @@ const Navbar = () => {
                     ))}
                 </div>
 
-                {/* User Authentication & Profile */}
+                {/* User Auth Section */}
                 <div className="hidden md:flex space-x-4 items-center">
                     {isLoggedIn ? (
                         <div className="relative flex items-center space-x-4">
                             <button onClick={() => navigate("/profile")} className="relative text-white text-3xl">
                                 <FaUsers className="hover:text-pink-400" />
                             </button>
-                            {/* Bell Icon with Notification Dot */}
                             <button onClick={() => navigate("/notification")} className="relative text-white text-3xl">
                                 <FaBell className="hover:text-pink-400" />
                                 <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
@@ -107,7 +116,7 @@ const Navbar = () => {
                                 )}
                             </button>
 
-                            {/* Profile Menu */}
+                            {/* Dropdown Menu */}
                             {showProfileMenu && (
                                 <div className="absolute right-0 mt-12 w-48 bg-white rounded-lg shadow-lg p-4 text-gray-800">
                                     <p className="font-semibold">
@@ -115,27 +124,25 @@ const Navbar = () => {
                                     </p>
                                     <button
                                         onClick={handleLogout}
-                                        className="mt-2 w-full text-center bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                        className="mt-2 w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                                     >
                                         Logout
                                     </button>
                                     <button
-                                        onClick={() => setShowProfileMenu(false)} // Hide the menu
-                                        className="mt-2 w-full text-center bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                        onClick={() => setShowProfileMenu(false)}
+                                        className="mt-2 w-full bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
                                     >
                                         Cancel
                                     </button>
-
                                     <button
                                         onClick={() => {
                                             setShowProfileMenu(false);
                                             navigate("/userprofile");
                                         }}
-                                        className="mt-2 w-full text-center bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                        className="mt-2 w-full bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
                                     >
                                         User Profile
                                     </button>
-
                                 </div>
                             )}
                         </div>

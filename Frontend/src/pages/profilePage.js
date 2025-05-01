@@ -32,7 +32,7 @@ const ProfilesPage = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            console.log("Profiles:", response.data);
+            // console.log("Profiles:", response.data);
             setProfiles(response.data || []);
         } catch (error) {
             console.error("Error fetching profiles:", error.response?.data || error);

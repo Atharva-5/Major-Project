@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import AddProfileView, get_user_by_id, get_user_details, RegisterView, LoginView, send_random_profiles, ConnectionCreateView, send_connection_request, ConnectionListByReceiverView, get_filtered_profiles, get_notifications
+from .views import AddProfileView, get_user_by_id, get_user_details, RegisterView, LoginView, send_random_profiles, ConnectionCreateView, send_connection_request, ConnectionListByReceiverView, get_filtered_profiles, get_notifications, accept_connection, reject_connection
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -33,4 +33,13 @@ urlpatterns = [
          ConnectionListByReceiverView.as_view(), name='connection-list-by-receiver'),
 
     path('addprofile/<int:id>', AddProfileView.as_view(), name='add-profile'),
+
+    # Accept connection request
+    path('connections/accept/<int:connection_id>/',
+         accept_connection, name='accept-connection'),
+
+    # Reject connection request
+    path('connections/reject/<int:connection_id>/',
+         reject_connection, name='reject-connection'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

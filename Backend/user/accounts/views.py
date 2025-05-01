@@ -1,3 +1,6 @@
+from .models import Connection, Notification
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404, render
 
 from rest_framework.response import Response
@@ -140,3 +143,51 @@ class AddProfileView(APIView):
             serializer.save()
             return Response({'message': 'Profile updated successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Accept request
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def accept_connection(request, connection_id):
+    try:
+        connection = Connection.objects.get(
+            id=connection_id, receiver=request.user)
+        if connection:
+            # Accept connection logic
+            connection.accept()
+
+            # Create a notification for the sender
+            Notification.objects.create(
+                sender=request.user,
+                receiver=connection.sender,
+                message=f"{request.user.username} accepted your connection request."
+            )
+
+            return Response({"message": "Connection accepted and sender notified."}, status=status.HTTP_200_OK)
+    except Connection.DoesNotExist:
+        return Response({"error": "Connection request not found."}, status=status.HTTP_404_NOT_FOUND)
+
+# Reject connection
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reject_connection(request, connection_id):
+    try:
+        connection = Connection.objects.get(
+            id=connection_id, receiver=request.user)
+        if connection:
+            # Reject connection logic
+            connection.reject()
+
+            # Create a notification for the sender
+            Notification.objects.create(
+                sender=request.user,
+                receiver=connection.sender,
+                message=f"{request.user.username} rejected your connection request."
+            )
+
+            return Response({"message": "Connection rejected and sender notified."}, status=status.HTTP_200_OK)
+    except Connection.DoesNotExist:
+        return Response({"error": "Connection request not found."}, status=status.HTTP_404_NOT_FOUND)

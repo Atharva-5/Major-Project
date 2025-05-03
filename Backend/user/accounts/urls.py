@@ -11,7 +11,7 @@ urlpatterns = [
     path("user/", get_user_details, name="user-details"),
 
     # API for explore profile page to get random profiles
-    path('profiles/random/', send_random_profiles, name='random-profiles'),
+    path('profiles/random/<str:gender>/', send_random_profiles, name='random-profiles'),
 
     path('user/<int:user_id>/', get_user_by_id, name='get-user-by-id'),
 

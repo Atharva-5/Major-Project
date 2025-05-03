@@ -18,16 +18,19 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 User = get_user_model()
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def send_random_profiles(request):
-    users = User.objects.exclude(id=request.user.id)
+def send_random_profiles(request, gender):
+    # Normalize the gender string (e.g., Male/Female to lowercase for consistency)
+    gender = gender.lower()
 
-    if users.exists():  # Ensure there are users available
-        random_users = random.sample(list(users), min(10, users.count()))
+    # Filter users by gender and exclude the requesting user
+    users = User.objects.filter(gender__iexact=gender).exclude(id=request.user.id)
+
+    if users.exists():
+        random_users = random.sample(list(users), min(20, users.count()))
     else:
-        random_users = []  # Return an empty list if no users exist
+        random_users = []
 
     serializer = UserSerializer(random_users, many=True)
     return Response(serializer.data)

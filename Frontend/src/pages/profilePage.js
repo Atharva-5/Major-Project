@@ -7,52 +7,58 @@ import axios from "axios";
 const ProfilesPage = () => {
     const navigate = useNavigate();
     const [profiles, setProfiles] = useState([]);
+    const [currentUserGender, setCurrentUserGender] = useState("");
 
     useEffect(() => {
         const token = localStorage.getItem("accessToken");
         if (!token) {
             navigate("/login");
         } else {
-            fetchProfiles();
+            fetchCurrentUserGender(token);
         }
     }, [navigate]);
 
-    const fetchProfiles = async () => {
-        const token = localStorage.getItem("accessToken");
-
-        if (!token) {
-            console.error("Token is missing.");
-            return;
-        }
-
+    const fetchCurrentUserGender = async (token) => {
         try {
-            const response = await axios.get(
-                `http://127.0.0.1:8000/auth/profiles/random/`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            // console.log("Profiles:", response.data);
-            setProfiles(response.data || []);
-        } catch (error) {
-            console.error("Error fetching profiles:", error.response?.data || error);
+            const res = await axios.get("http://127.0.0.1:8000/auth/user/", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const userGender = res.data.gender; // assuming response has `gender` field
+            setCurrentUserGender(userGender);
+
+            const oppositeGender = userGender === "Male" ? "Female" : "Male";
+            fetchProfiles(oppositeGender);
+        } catch (err) {
+            console.error("Failed to fetch user profile:", err.response?.data || err);
         }
     };
 
+    const fetchProfiles = async (gender) => {
+        const token = localStorage.getItem("accessToken");
+        try {
+            const res = await axios.get(`http://127.0.0.1:8000/auth/profiles/random/${gender}/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setProfiles(res.data || []);
+        } catch (err) {
+            console.error("Failed to fetch profiles:", err.response?.data || err);
+        }
+    };
 
     const handleLike = async (receiverId) => {
         try {
-            const response = await axios.post(
+            const res = await axios.post(
                 `http://127.0.0.1:8000/auth/connections/send/`,
                 { receiver_id: receiverId },
                 { headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` } }
             );
 
-            if (response.status === 201) {
+            if (res.status === 201) {
                 setProfiles((prev) => prev.filter((p) => p.id !== receiverId));
             }
-        } catch (error) {
-            console.error("Error sending connection request:", error.response?.data || error);
+        } catch (err) {
+            console.error("Error sending connection request:", err.response?.data || err);
         }
     };
 
@@ -64,6 +70,7 @@ const ProfilesPage = () => {
         <div className="min-h-screen bg-gradient-to-b from-pink-200 to-red-600 flex flex-col items-center">
             <div className="flex flex-col items-center pt-24">
                 <h1 className="text-black text-3xl font-bold mb-6">Explore Profiles ❤️</h1>
+
                 {profiles.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {profiles.map((user) => (

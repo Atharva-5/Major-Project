@@ -7,6 +7,8 @@ const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [user, setUser] = useState({ name: "", profilePic: "" });
+    const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -40,21 +42,30 @@ const Navbar = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (checkAuthToken()) fetchUser();
-    }, [fetchUser]);
+    const fetchNotifications = useCallback(async () => {
+        const token = localStorage.getItem("accessToken");
+
+        if (!token) return;
+
+        try {
+            const response = await axios.get("http://127.0.0.1:8000/auth/notifications/", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            setNotifications(response.data);
+            const unread = response.data.filter((notification) => !notification.read).length;
+            setUnreadCount(unread);
+        } catch (error) {
+            console.error("Error fetching notifications", error);
+        }
+    }, []);
 
     useEffect(() => {
-        const handleLoginSuccess = () => {
+        if (checkAuthToken()) {
             fetchUser();
-        };
-
-        window.addEventListener("loginSuccess", handleLoginSuccess);
-
-        return () => {
-            window.removeEventListener("loginSuccess", handleLoginSuccess);
-        };
-    }, [fetchUser]);
+            fetchNotifications();
+        }
+    }, [fetchUser, fetchNotifications]);
 
     const handleNavClick = (page) => {
         const section = document.getElementById(page);
@@ -98,9 +109,15 @@ const Navbar = () => {
                             <button onClick={() => navigate("/profile")} className="relative text-white text-3xl">
                                 <FaUsers className="hover:text-pink-400" />
                             </button>
+
+                            {/* Notification Button with Badge */}
                             <button onClick={() => navigate("/notification")} className="relative text-white text-3xl">
                                 <FaBell className="hover:text-pink-400" />
-                                <span className="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-0 right-0 block h-4 w-4 rounded-full bg-red-500 text-xs text-white flex justify-center items-center">
+                                        {unreadCount}
+                                    </span>
+                                )}
                             </button>
 
                             {/* Profile Icon */}
@@ -109,7 +126,7 @@ const Navbar = () => {
                                     <img
                                         src={`http://127.0.0.1:8000${user.profilePic}`}
                                         alt="Profile"
-                                        className="w-10 h-10 rounded-full border-2 border-white"
+                                        className="w-12 h-12 rounded-full border-2 border-white"
                                     />
                                 ) : (
                                     <FaUserCircle />
@@ -118,31 +135,38 @@ const Navbar = () => {
 
                             {/* Dropdown Menu */}
                             {showProfileMenu && (
-                                <div className="absolute right-0 mt-12 w-48 bg-white rounded-lg shadow-lg p-4 text-gray-800">
-                                    <p className="font-semibold">
+                                <div className="absolute right-0 mt-32 w-48 bg-white rounded-lg shadow-xl p-4 text-gray-800 transition-all transform scale-95 hover:scale-100 ease-in-out duration-200 z-50 max-h-80 overflow-y-auto">
+                                    {/* User Name */}
+                                    <p className="font-semibold text-lg text-gray-900">
                                         {user.name.replace(/\b\w/g, (char) => char.toUpperCase())}
                                     </p>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="mt-2 w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                    >
-                                        Logout
-                                    </button>
-                                    <button
-                                        onClick={() => setShowProfileMenu(false)}
-                                        className="mt-2 w-full bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setShowProfileMenu(false);
-                                            navigate("/userprofile");
-                                        }}
-                                        className="mt-2 w-full bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                                    >
-                                        User Profile
-                                    </button>
+
+                                    {/* Buttons */}
+                                    <div className="mt-3 space-y-2">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 ease-in-out"
+                                        >
+                                            Logout
+                                        </button>
+
+                                        <button
+                                            onClick={() => setShowProfileMenu(false)}
+                                            className="w-full bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all duration-200 ease-in-out"
+                                        >
+                                            Cancel
+                                        </button>
+
+                                        <button
+                                            onClick={() => {
+                                                setShowProfileMenu(false);
+                                                navigate("/userprofile");
+                                            }}
+                                            className="w-full bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all duration-200 ease-in-out"
+                                        >
+                                            User Profile
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>

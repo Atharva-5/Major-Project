@@ -10,7 +10,10 @@ const UserProfile = () => {
     caste: "",
     gender: "",
     photo: null,
+    occupation: "",
+    interests: "", // will be a comma-separated string
   });
+
   const [userId, setUserId] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
@@ -32,6 +35,9 @@ const UserProfile = () => {
           phone: res.data.phone || "",
           caste: res.data.caste || "",
           gender: res.data.gender || "",
+          occupation: res.data.occupation || "",
+          interests: (res.data.interests || []).join(", "), // convert list to string
+          photo: res.data.photo || null,  // Fetch the photo URL
         }));
       } catch (err) {
         console.error("Error fetching user:", err);
@@ -58,7 +64,12 @@ const UserProfile = () => {
       const formData = new FormData();
       for (const key in profile) {
         if (profile[key]) {
-          formData.append(key, profile[key]);
+          if (key === "interests") {
+            const interestsList = profile[key].split(",").map(item => item.trim());
+            formData.append(key, JSON.stringify(interestsList)); // ✅ send list as JSON string
+          } else {
+            formData.append(key, profile[key]);
+          }
         }
       }
 
@@ -79,7 +90,7 @@ const UserProfile = () => {
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <h2>Your Profile</h2>
+        <h2>Your Profile 💖</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input
@@ -143,6 +154,30 @@ const UserProfile = () => {
             <label className="floating-label">Gender</label>
           </div>
 
+          <div className="form-group">
+            <input
+              type="text"
+              name="occupation"
+              value={profile.occupation}
+              onChange={handleChange}
+              placeholder=" "
+              className="input"
+            />
+            <label className="floating-label">Occupation</label>
+          </div>
+
+          <div className="form-group">
+            <input
+              type="text"
+              name="interests"
+              value={profile.interests}
+              onChange={handleChange}
+              placeholder="e.g. Music, Reading, Travel"
+              className="input"
+            />
+            <label className="floating-label">Interests (comma-separated)</label>
+          </div>
+
           <div className="form-group file-input">
             <label>Profile Photo</label>
             <input
@@ -151,13 +186,15 @@ const UserProfile = () => {
               accept="image/*"
               onChange={handleChange}
             />
-            {photoPreview && (
+            {photoPreview ? (
+              <img src={photoPreview} alt="Preview" className="photo-preview" />
+            ) : profile.photo ? (
               <img
-                src={photoPreview}
-                alt="Preview"
+                src={`http://localhost:8000${profile.photo}`}
+                alt="Profile"
                 className="photo-preview"
               />
-            )}
+            ) : null}
           </div>
 
           <button type="submit" className="submit-btn">Save Changes</button>

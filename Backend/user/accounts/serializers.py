@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'user_id', 'username', 'password',
-                  'email', 'phone', 'caste', 'gender', 'age', 'photo']
+                  'email', 'phone', 'caste', 'gender', 'age', 'photo', 'occupation', 'interests']
         extra_kwargs = {
             'password': {'write_only': True},
             'user_id': {'read_only': True},
@@ -51,10 +51,12 @@ class ConnectionSerializer(serializers.ModelSerializer):
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['phone', 'email', 'caste', 'gender', 'photo']
+        fields = ['phone', 'email', 'caste', 'gender',
+                  'photo', 'occupation', 'interests']
 
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'phone', 'photo', 'gender', 'age']
+        fields = ['username', 'phone', 'photo',
+                  'gender', 'age', 'occupation', 'interests', 'caste']

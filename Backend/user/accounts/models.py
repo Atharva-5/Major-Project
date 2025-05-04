@@ -18,6 +18,10 @@ class CustomUser(AbstractUser):
         'Male', 'Male'), ('Female', 'Female')], blank=True, null=True)
     photo = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
+# New Added fields
+    occupation = models.CharField(max_length=100, blank=True, null=True)
+
+    interests = models.JSONField(blank=True, null=True)
 
     def __str__(self):
         return self.username

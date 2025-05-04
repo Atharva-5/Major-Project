@@ -13,6 +13,8 @@ const Signup = () => {
     gender: '',
     age: '',
     photo: '',
+    occupation: '',
+    interests: '',
   });
 
   const [error, setError] = useState('');
@@ -22,13 +24,11 @@ const Signup = () => {
     const { name, value, files } = e.target;
     if (name === 'photo') {
       const file = files[0];
-      console.log('Selected file:', file);  // ✅ Debug log
       setFormData({ ...formData, photo: file });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,13 +36,13 @@ const Signup = () => {
 
     const form = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      form.append(key, value);
+      if (key === 'interests') {
+        const interestsList = value.split(',').map(item => item.trim());
+        form.append(key, JSON.stringify(interestsList)); // ✅ stringify the array
+      } else {
+        form.append(key, value);
+      }
     });
-
-    // Debugging: log all form data
-    for (let [key, value] of form.entries()) {
-      console.log(`${key}:`, value);
-    }
 
     try {
       await axios.post('http://127.0.0.1:8000/auth/register/', form, {
@@ -57,38 +57,58 @@ const Signup = () => {
     }
   };
 
-  const renderInput = (field, type = 'text') => (
-    <div className="input-group" key={field}>
-      <input
-        type={type}
-        name={field}
-        value={formData[field]}
-        onChange={handleChange}
-        className="input-field"
-        placeholder=" "
-        required
-      />
-      <label className="floating-label">
-        {field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
-      </label>
-    </div>
-  );
+
+  const renderInput = (field, type = 'text') => {
+    const labelMap = {
+      username: 'Username',
+      email: 'Email',
+      password: 'Password',
+      phone: 'Phone Number',
+      caste: 'Caste',
+      gender: 'Gender (e.g., Male/Female)',
+      age: 'Age',
+      occupation: 'Occupation',
+      interests: 'Interests (comma-separated)',
+    };
+
+    return (
+      <div className="input-group" key={field}>
+        <input
+          type={type}
+          name={field}
+          value={formData[field]}
+          onChange={handleChange}
+          className="input-field"
+          placeholder=" "
+          required
+        />
+        <label className="floating-label">
+          {labelMap[field] || field.charAt(0).toUpperCase() + field.slice(1)}
+        </label>
+      </div>
+    );
+  };
 
   return (
     <div className="signup-container">
       <form onSubmit={handleSubmit} className="signup-form" encType="multipart/form-data">
-        <h2 className="signup-title">Sign Up</h2>
+        <h2 className="signup-title">Create your Profile ⭐</h2>
         {error && <p className="signup-error">{error}</p>}
 
-        {renderInput('username')}
-        {renderInput('email', 'email')}
-        {renderInput('phone')}
-        {renderInput('caste')}
-        {renderInput('gender')}
-        {renderInput('age', 'number')}
-        {renderInput('password', 'password')}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-2">
+          {renderInput('username')}
+          {renderInput('email', 'email')}
+          {renderInput('phone')}
+          {renderInput('caste')}
+          {renderInput('gender')}
+          {renderInput('age', 'number')}
+          {renderInput('occupation')}
+          {renderInput('interests')}
+          {renderInput('password', 'password')}
+        </div>
 
-        <div className="input-group">
+        {/* Profile photo input */}
+        <div className="input-group mb-6">
           <input
             type="file"
             name="photo"
@@ -97,15 +117,12 @@ const Signup = () => {
             className="input-field"
             required
           />
-
-          <label className="floating-label">Profile Photo (JPEG)</label>
+          <label className="floating-label">Profile Photo (JPEG/PNG)</label>
         </div>
 
-        <div className="button-container">
+        {/* Button section */}
+        <div className="button-container flex justify-center gap-4">
           <button type="submit" className="signup-button">Submit</button>
-          <button type="button" className="login-button" onClick={() => navigate('/login')}>
-            Login
-          </button>
         </div>
       </form>
     </div>

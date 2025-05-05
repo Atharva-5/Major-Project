@@ -3,13 +3,14 @@ services:
     name: django-backend
     env: python
     plan: free
-    branch: main  # change this if your GitHub branch is different
+    branch: main  # or your GitHub branch name
+    rootDir: Backend/user
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn User.wsgi:application
+    startCommand: gunicorn user.wsgi:application
     autoDeploy: true
     envVars:
       - key: DJANGO_SETTINGS_MODULE
-        value: User.settings
+        value: user.settings
       - key: PYTHON_VERSION
         value: 3.10
       - key: DEBUG

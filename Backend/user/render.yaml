@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: django-backend
+    env: python
+    plan: free
+    branch: main  # change this if your GitHub branch is different
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn User.wsgi:application
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: User.settings
+      - key: PYTHON_VERSION
+        value: 3.10
+      - key: DEBUG
+        value: False

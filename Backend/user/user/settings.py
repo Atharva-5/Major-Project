@@ -15,7 +15,6 @@ from pathlib import Path
 import os
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,7 +30,7 @@ SECRET_KEY = 'django-insecure-2!-v=#@bc3ge%16a$rx6m)4rifbesxe70-+@542^=)!$3*!#nu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['']
 
 
 # Application definition
@@ -56,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware', #enable cors to connect with react
+    'corsheaders.middleware.CorsMiddleware',  # enable cors to connect with react
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allow requests from frontend
